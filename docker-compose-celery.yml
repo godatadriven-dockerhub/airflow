@@ -6,13 +6,9 @@ services:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
-        expose:
-            - "5432"
             
     redis:
         image: redis:latest
-        expose:
-           - "6379"
 
     webserver:
         image: godatadriven/airflow:latest
@@ -20,7 +16,6 @@ services:
             - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
             - AIRFLOW__CORE__EXECUTOR=CeleryExecutor        
             - WAIT_FOR=postgres:5432
-        restart: always
         depends_on:
             - postgres
         volumes:
@@ -36,7 +31,6 @@ services:
             - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
             - AIRFLOW__CELERY__BROKER_URL="redis://redis:6379/1"
             - WAIT_FOR=webserver:8080;redis:6379
-        restart: always
         depends_on:
             - webserver
             - redis
@@ -51,7 +45,6 @@ services:
             - AIRFLOW__CELERY__BROKER_URL="redis://redis:6379/1"
             - AIRFLOW__CORE__EXECUTOR=CeleryExecutor            
             - WAIT_FOR=redis:6379
-        restart: always
         depends_on:
             - redis
         volumes:
