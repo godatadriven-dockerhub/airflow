@@ -1,0 +1,59 @@
+version: '2.1'
+services:
+    postgres:
+        image: postgres:latest
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+        expose:
+            - "5432"
+            
+    redis:
+        image: redis:latest
+        expose:
+           - "6379"
+
+    webserver:
+        image: godatadriven/airflow:latest
+        environment:
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor        
+            - WAIT_FOR=postgres:5432
+        restart: always
+        depends_on:
+            - postgres
+        volumes:
+            - ./dags:/usr/local/airflow/dags
+        ports:
+            - "8080:8080"
+        command: upgradedb_webserver
+        
+    scheduler:
+        image: godatadriven/airflow:latest
+        environment:
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW__CELERY__BROKER_URL="redis://redis:6379/1"
+            - WAIT_FOR=webserver:8080;redis:6379
+        restart: always
+        depends_on:
+            - webserver
+            - redis
+        volumes:
+            - ./dags:/usr/local/airflow/dags
+        command: scheduler
+        
+    worker:
+        image: godatadriven/airflow:latest
+        environment:
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CELERY__BROKER_URL="redis://redis:6379/1"
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor            
+            - WAIT_FOR=redis:6379
+        restart: always
+        depends_on:
+            - redis
+        volumes:
+            - ./dags:/usr/local/airflow/dags
+        command: worker
