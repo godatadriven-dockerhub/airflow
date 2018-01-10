@@ -24,6 +24,7 @@ RUN apt-get update \
     && apt-get clean -y
 
 ADD entrypoint.sh /scripts/
+RUN chmod +x /scripts/entrypoint.sh
 
 WORKDIR /usr/local/airflow
 VOLUME ["/usr/local/airflow/dags"]
