@@ -7,7 +7,7 @@ ARG BUILD_DATE
 ARG AIRFLOW_VERSION
 ARG AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh
 
-LABEL org.label-schema.name="Apache Airflow $AIRFLOW_VERSION" \
+LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
       org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.version=$AIRFLOW_VERSION
 
@@ -23,11 +23,11 @@ RUN apt-get update \
     && apt-get remove -y --purge gcc g++ git\
     && apt-get clean -y
 
-ADD entrypoint.sh /scripts/
+COPY entrypoint.sh /scripts/
 RUN chmod +x /scripts/entrypoint.sh
 
 WORKDIR /usr/local/airflow
-VOLUME ["/usr/local/airflow/dags"]
+VOLUME ["/usr/local/airflow/dags", "/usr/local/airflow/logs"]
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
 CMD ["--help"]
