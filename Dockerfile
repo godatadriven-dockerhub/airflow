@@ -12,7 +12,7 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
       org.label-schema.version=$AIRFLOW_VERSION
 
 RUN apt-get update \
-    && apt-get install -y gcc g++ netcat git --no-install-recommends \
+    && apt-get install -y gcc g++ netcat git ca-certificates --no-install-recommends \
     && if [ "$AIRFLOW_VERSION" = "master" ]; then\
            pip install --no-cache-dir git+https://github.com/apache/incubator-airflow/#egg=apache-airflow[$AIRFLOW_EXTRAS];\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
