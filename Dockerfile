@@ -13,6 +13,7 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
 
 RUN apt-get update \
     && apt-get install -y gcc g++ netcat git ca-certificates --no-install-recommends \
+    && conda install -y pip==9 \
     && if [ "$AIRFLOW_VERSION" = "master" ]; then\
            pip install --no-cache-dir git+https://github.com/apache/incubator-airflow/#egg=apache-airflow[$AIRFLOW_EXTRAS];\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
@@ -20,7 +21,8 @@ RUN apt-get update \
        else\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
        fi\
-    && apt-get remove -y --purge gcc g++ git\
+    && apt-get remove -y --purge gcc g++ git \
+    && apt autoremove -y \
     && apt-get clean -y
 
 COPY entrypoint.sh /scripts/
