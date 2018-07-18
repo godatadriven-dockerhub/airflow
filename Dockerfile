@@ -11,9 +11,12 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
       org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.version=$AIRFLOW_VERSION
 
-RUN apt-get update \
+RUN set -x\
+    && apt-get update \
     && apt-get install -y gcc g++ netcat git ca-certificates --no-install-recommends \
-    && conda install -y pip==9 \
+    && if [ "$AIRFLOW_VERSION" = "1.8.2" ]; then\
+           conda install -y pip==9;\
+       fi\
     && if [ "$AIRFLOW_VERSION" = "master" ]; then\
            pip install --no-cache-dir git+https://github.com/apache/incubator-airflow/#egg=apache-airflow[$AIRFLOW_EXTRAS];\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
