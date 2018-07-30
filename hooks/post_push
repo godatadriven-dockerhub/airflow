@@ -5,7 +5,9 @@ IMAGE_REPO=${IMAGE_NAME%:*}
 IMAGE_TAG=${IMAGE_NAME#*:}
 
 # Retag to latest
-if [ "$IMAGE_TAG" = "1.9.0-python3" ]; then
+if [ "$IMAGE_TAG" = "1.9.0-python3.6" ]; then
     docker tag $IMAGE_NAME ${IMAGE_REPO}:latest
     docker push ${IMAGE_REPO}:latest
+    docker tag $IMAGE_NAME ${IMAGE_REPO}:1.9.0-python3
+    docker push ${IMAGE_REPO}:1.9.0-python3
 fi
