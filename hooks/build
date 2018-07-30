@@ -7,8 +7,9 @@ IMAGE_TAG=${IMAGE_NAME#*:}
 AIRFLOW_VERSION=${IMAGE_TAG%-*}
 PYTHON_TAG=${IMAGE_TAG#*-}
 PYTHON_VERSION=${PYTHON_TAG:6}
+MINICONDA_VERSION=${PYTHON_TAG:0:1}
 
-if [ $PYTHON_VERSION = "3" ]; then
+if [ $MINICONDA_VERSION = "3" ]; then
     AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,emr,password,postgres,slack,ssh
 else
 	AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh
