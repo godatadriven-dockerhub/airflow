@@ -32,8 +32,8 @@ RUN set -x\
 COPY entrypoint.sh /scripts/
 RUN chmod +x /scripts/entrypoint.sh
 
-WORKDIR /usr/local/airflow
-VOLUME ["/usr/local/airflow/dags", "/usr/local/airflow/logs"]
+WORKDIR /root/airflow
+VOLUME ["/root/airflow/dags", "/root/airflow/logs"]
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
 CMD ["--help"]
