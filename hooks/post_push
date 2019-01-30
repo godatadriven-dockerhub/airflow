@@ -7,7 +7,7 @@ VERSION_TAG=${IMAGE_TAG%-*}
 PYTHON_TAG=${IMAGE_TAG#*-}
 
 # Retag to latest
-if [ "$IMAGE_TAG" = "1.10.1-python3.6" ]; then
+if [ "$IMAGE_TAG" = "1.10.2-python3.6" ]; then
     docker tag $IMAGE_NAME ${IMAGE_REPO}:latest
     docker push ${IMAGE_REPO}:latest
 fi
