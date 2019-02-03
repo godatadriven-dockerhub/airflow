@@ -20,6 +20,7 @@ services:
             - postgres
         volumes:
             - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
         ports:
             - "8080:8080"
         command: upgradedb_webserver
@@ -36,6 +37,7 @@ services:
             - redis
         volumes:
             - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
         command: scheduler
         
     worker:
@@ -49,4 +51,5 @@ services:
             - redis
         volumes:
             - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
         command: worker
