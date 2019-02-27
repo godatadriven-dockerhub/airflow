@@ -4,6 +4,9 @@
 IMAGE_REPO=${IMAGE_NAME%:*}
 IMAGE_TAG=${IMAGE_NAME#*:}
 
+# We use IMAGE_TAG to retag builds, to extract retag skip first one
+IMAGE_TAG=${IMAGE_TAG#*,}
+
 # Split $IMAGE_TAG on , and tag/push for each
 IFS=","
 for CUR_IMAGE_TAG in $IMAGE_TAG
