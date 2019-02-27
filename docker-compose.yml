@@ -16,7 +16,8 @@ services:
         depends_on:
             - postgres
         volumes:
-            - ./dags:/usr/local/airflow/dags
+            - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
         ports:
             - "8080:8080"
         command: upgradedb_webserver
@@ -30,5 +31,6 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ./dags:/usr/local/airflow/dags
+            - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
         command: scheduler
