@@ -6,6 +6,7 @@ IMAGE_TAG=${IMAGE_NAME#*:}
 
 # We use IMAGE_TAG to retag builds, to extract build arguments only use "first" tag
 IMAGE_TAG=${IMAGE_TAG%,*}
+IMAGE_NAME=$IMAGE_REPO":"$IMAGE_TAG
 
 AIRFLOW_VERSION=${IMAGE_TAG%-*}
 PYTHON_TAG=${IMAGE_TAG#*-}
