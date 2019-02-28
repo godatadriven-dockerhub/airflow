@@ -20,4 +20,4 @@ docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
              --build-arg PYTHON_VERSION=$PYTHON_VERSION \
              --build-arg AIRFLOW_VERSION=$AIRFLOW_VERSION \
              --build-arg AIRFLOW_EXTRAS=$AIRFLOW_EXTRAS \
-             -t $IMAGE_NAME .
+             -t $DOCKER_REPO:${DOCKER_TAG//,/ -t $DOCKER_REPO:} .
