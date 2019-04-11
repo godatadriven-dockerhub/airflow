@@ -14,7 +14,7 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
 
 RUN set -x\
     && apt-get update \
-    && apt-get install -y gcc g++ netcat git ca-certificates --no-install-recommends \
+    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev --no-install-recommends \
     && if [ "$AIRFLOW_VERSION" = "1.8.2" ]; then\
            conda install -y pip==9;\
        fi\
@@ -25,7 +25,7 @@ RUN set -x\
        else\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
        fi\
-    && apt-get remove -y --purge gcc g++ git \
+    && apt-get remove -y --purge gcc g++ git libpq-dev \
     && apt autoremove -y \
     && apt-get clean -y
 
