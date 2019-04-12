@@ -14,18 +14,25 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
 
 RUN set -x\
     && apt-get update \
-    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev --no-install-recommends \
+    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev curl --no-install-recommends \
     && if [ "$AIRFLOW_VERSION" = "1.8.2" ]; then\
            conda install -y pip==9;\
        fi\
     && if [ "$AIRFLOW_VERSION" = "master" ]; then\
-           pip install --no-cache-dir git+https://github.com/apache/incubator-airflow/#egg=apache-airflow[$AIRFLOW_EXTRAS];\
+           pip install --no-cache-dir git+https://github.com/apache/airflow/#egg=apache-airflow[$AIRFLOW_EXTRAS];\
+           curl -sL https://deb.nodesource.com/setup_8.x | bash - ;\
+           apt-get install -y nodejs ;\
+           cd /opt/miniconda3/lib/python3.6/site-packages/airflow/www/;\
+           npm install;\
+           npm run prod;\
+           cd /;\
+           apt-get remove -y --purge nodejs ;\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION;\
        else\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
        fi\
-    && apt-get remove -y --purge gcc g++ git \
+    && apt-get remove -y --purge gcc g++ git curl \
     && apt autoremove -y \
     && apt-get clean -y
 
