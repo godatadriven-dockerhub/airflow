@@ -25,7 +25,7 @@ RUN set -x\
        else\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
        fi\
-    && apt-get remove -y --purge gcc g++ git libpq-dev \
+    && apt-get remove -y --purge gcc g++ git \
     && apt autoremove -y \
     && apt-get clean -y
 
