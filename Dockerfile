@@ -6,7 +6,7 @@ ENV SLUGIFY_USES_TEXT_UNIDECODE yes
 
 ARG BUILD_DATE
 ARG AIRFLOW_VERSION
-ARG AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh
+ARG AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh,kubernetes
 
 LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
       org.label-schema.build-date=$BUILD_DATE \
