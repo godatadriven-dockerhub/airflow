@@ -10,9 +10,9 @@ PYTHON_VERSION=${PYTHON_TAG:6}
 MINICONDA_VERSION=${PYTHON_VERSION:0:1}
 
 if [ ${MINICONDA_VERSION} = "3" ]; then
-    AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,emr,password,postgres,slack,ssh
+    AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,emr,password,postgres,slack,ssh,kubernetes
 else
-	AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh
+    AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh,kubernetes
 fi
 
 # Trigger build
