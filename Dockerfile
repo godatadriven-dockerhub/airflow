@@ -28,7 +28,7 @@ RUN set -x\
            cd /;\
            apt-get remove -y --purge nodejs ;\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
-           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION;\
+           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION Flask==1.0.4;\
        else\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
        fi\
