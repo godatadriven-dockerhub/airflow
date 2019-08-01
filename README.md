@@ -25,8 +25,11 @@ It will install:
 - Pip dependencies specified in `/dependencies/requirements.txt`
 - Conda dependencies specified in `/dependencies/environment.yml`
 
+In the `dependencies_example` folder we've included some examples.
+
 ## Docker compose
-We've build three compose files which use postgresql as a database. 
-The first compose file starts the webserver and localexecutor as separate containers. 
-The second compose file uses celery to communicate with the executors.
-Finally the last compose file shows how to add additional dependencies at runtime.
+We've build three compose files which use postgresql as a database.
+ 
+- The first compose file starts the webserver and localexecutor as separate containers. 
+- The second compose file uses celery to communicate with the executors.
+- Finally the last compose file shows how to add additional dependencies at runtime.
