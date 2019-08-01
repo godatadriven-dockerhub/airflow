@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+    postgres:
+        image: postgres:latest
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+
+    webserver:
+        image: godatadriven/airflow:latest
+        environment:
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+            - WAIT_FOR=postgres:5432
+        depends_on:
+            - postgres
+        volumes:
+            - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
+            - ./dependencies_example:/dependencies
+        ports:
+            - "8080:8080"
+        command: upgradedb_webserver
+        
+    scheduler:
+        image: godatadriven/airflow:latest
+        environment:
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+            - WAIT_FOR=webserver:8080
+        depends_on:
+            - webserver
+        volumes:
+            - ./dags:/root/airflow/dags
+            - ./logs:/root/airflow/logs
+            - ./dependencies_example/:/dependencies
+        command: scheduler

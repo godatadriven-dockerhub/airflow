@@ -1,0 +1,2 @@
+# example debian dependency to install in your container
+cowsay

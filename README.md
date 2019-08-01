@@ -17,5 +17,16 @@ To run the webserver, try our `upgradedb_webserver` command which first runs upg
 docker run godatadriven/airflow upgradedb_webserver
 ```
 
+## Adding dependencies
+When starting the container, the entrypoint script will look for additional dependencies to install in `/dependencies`.
+It will install:
+
+- Debian dependencies specified in `/dependencies/packages.txt`
+- Pip dependencies specified in `/dependencies/requirements.txt`
+- Conda dependencies specified in `/dependencies/environment.yml`
+
 ## Docker compose
-We've build two compose files which use postgresql as a database. The first compose file starts the webserver and localexecutor as separate containers. The other compose file uses celery to communicate with the executors.
+We've build three compose files which use postgresql as a database. 
+The first compose file starts the webserver and localexecutor as separate containers. 
+The second compose file uses celery to communicate with the executors.
+Finally the last compose file shows how to add additional dependencies at runtime.
