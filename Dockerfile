@@ -30,7 +30,7 @@ RUN set -x\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION Flask==1.0.4;\
        else\
-           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
+           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS] Flask==1.0.4;\
        fi\
     && apt-get remove -y --purge gcc g++ git curl \
     && apt autoremove -y \
