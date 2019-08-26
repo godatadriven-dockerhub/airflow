@@ -34,7 +34,13 @@ AIRFLOW_COMMAND="$1"
 shift
 
 if [ "$AIRFLOW_COMMAND" == "upgradedb_webserver" ]; then
-	airflow upgradedb
+    AIRFLOW_VERSION=$(python -c "from __future__ import print_function; from airflow import __version__; print(__version__)")
+    if [[ $AIRFLOW_VERSION == 2* ]]; then
+        echo "Detected Airflow version 2.0"
+        airflow db upgrade
+    else
+	   airflow upgradedb
+	fi
 	
 	AIRFLOW_COMMAND="webserver"
 fi
