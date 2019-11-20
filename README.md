@@ -27,6 +27,9 @@ It will install:
 
 In the `dependencies_example` folder we've included some examples.
 
+Additionally, you can customize the container at runtime with a pre and post hook.
+These will be called before, and after calling upgrade db.
+
 ## Docker compose
 We've build three compose files which use postgresql as a database.
  

@@ -30,19 +30,32 @@ if [ -n "$WAIT_FOR" ]; then
 	done
 fi
 
+ORIGINAL_COMMAND="$@"
 AIRFLOW_COMMAND="$1"
 shift
+
+# Run custom script if /dependencies/pre_hook.sh exists
+if [ -f /dependencies/pre_hook.sh ]; then
+  echo "Executing /dependencies/pre_hook.sh"
+  bash /dependencies/pre_hook.sh "$ORIGINAL_COMMAND"
+fi
 
 if [ "$AIRFLOW_COMMAND" == "upgradedb_webserver" ]; then
     AIRFLOW_VERSION=$(python -c "from __future__ import print_function; from airflow import __version__; print(__version__)")
     if [[ $AIRFLOW_VERSION == 2* ]]; then
-        echo "Detected Airflow version 2.0"
+        echo "Detected Airflow version 2.*"
         airflow db upgrade
     else
-	   airflow upgradedb
-	fi
-	
-	AIRFLOW_COMMAND="webserver"
+        echo "Detected Airflow version 1.*"
+        airflow upgradedb
+    fi
+    AIRFLOW_COMMAND="webserver"
+fi
+
+# Run custom script if /dependencies/post_hook.sh exists
+if [ -f /dependencies/post_hook.sh ]; then
+  echo "Executing /dependencies/post_hook.sh"
+  bash /dependencies/post_hook.sh "$ORIGINAL_COMMAND"
 fi
 
 exec airflow $AIRFLOW_COMMAND "$@"

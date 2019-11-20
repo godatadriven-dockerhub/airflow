@@ -3,4 +3,4 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- pandas=0.20.3=py36_0
+- pandas>=0.20
