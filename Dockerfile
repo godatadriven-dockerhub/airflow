@@ -14,7 +14,7 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
 
 RUN set -x\
     && apt-get update \
-    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev curl --no-install-recommends \
+    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev curl procps --no-install-recommends \
     && if [ "$AIRFLOW_VERSION" = "1.8.2" ]; then\
            conda install -y pip==9;\
        fi\
