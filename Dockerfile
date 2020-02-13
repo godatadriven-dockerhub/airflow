@@ -28,11 +28,11 @@ RUN set -x\
            cd /;\
            apt-get remove -y --purge nodejs ;\
        elif [ "$AIRFLOW_VERSION" = "1.9.0" ]; then\
-           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION;\
+           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION "werkzeug<1.0.0";\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
-           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION "flask==1.0.4";\
+           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION;\
        else\
-           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS] "flask==1.0.4";\
+           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS];\
        fi\
     && apt-get remove -y --purge gcc g++ git curl \
     && apt autoremove -y \
