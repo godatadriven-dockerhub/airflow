@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Determine AIRFLOW_HOME
+export AIRFLOW_HOME=$(python -c "from __future__ import print_function; from distutils.sysconfig import get_python_lib; print(get_python_lib())")/airflow
+echo "Airflow is installed in $AIRFLOW_HOME"
+
 # Install custom debian packages if packages.txt is present
 if [ -f /dependencies/packages.txt ]; then\
     echo "Installing custom debian packages from /dependencies/packages.txt"
