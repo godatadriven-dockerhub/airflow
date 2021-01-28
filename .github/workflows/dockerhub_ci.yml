@@ -1,0 +1,115 @@
+name: Dockerhub CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    # Triggers every week on tuesday night
+    - cron:  '0 0 * * 2'
+
+env:
+  # Specify which image to build
+  DOCKER_REPO: godatadriven/airflow
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Specify which tags to build
+        DOCKER_TAG: ["1.10.10-python3.7,1.10.10-python3,1.10-python3,python3,latest", "1.10.10-python2.7,1.10.10-python2,1.10-python2,python2", "1.9.0-python2.7,1.9.0-python2", "1.9.0-python3.6,1.9.0-python3", "master-python3.7"]
+
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Parse args
+        id: args
+        run: |
+            DOCKER_TAG="${{ matrix.DOCKER_TAG }}"
+            IMAGE_TAG=${DOCKER_TAG%%,*}"
+            
+            # Manipulate DOCKER_TAG to create build args
+            AIRFLOW_VERSION=${IMAGE_TAG%-*}
+            PYTHON_TAG=${IMAGE_TAG#*-}
+            PYTHON_VERSION=${PYTHON_TAG:6}
+            MINICONDA_VERSION=${PYTHON_VERSION:0:1}
+            
+            if [ ${MINICONDA_VERSION} = "3" ]; then
+                AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,emr,password,postgres,slack,ssh,kubernetes
+            else
+                AIRFLOW_EXTRAS=async,celery,crypto,jdbc,hdfs,hive,azure,gcp_api,emr,password,postgres,slack,ssh,kubernetes
+            fi
+            
+            BUILD_ARGS="PYTHON_VERSION=$PYTHON_VERSION
+                        AIRFLOW_VERSION=$AIRFLOW_VERSION
+                        AIRFLOW_EXTRAS=$AIRFLOW_EXTRAS"
+
+            # No modification needed beyond this point
+            BUILD_ARGS="${BUILD_ARGS//'%'/'%25'}"
+            BUILD_ARGS="${BUILD_ARGS//$'\n'/'%0A'}"
+            BUILD_ARGS="${BUILD_ARGS//$'\r'/'%0D'}"
+
+            echo "::set-output name=build_args::$BUILD_ARGS"
+
+      - name: Prepare
+        id: prep
+        run: |
+            DOCKER_TAG="${{ matrix.DOCKER_TAG }}"
+            DOCKER_IMAGE_NAME="$DOCKER_REPO:${DOCKER_TAG%%,*}"
+            echo ::set-output name=image_name::${DOCKER_IMAGE_NAME}
+            
+            TAGS="$DOCKER_REPO:${DOCKER_TAG//,/,$DOCKER_REPO:}"
+            echo ::set-output name=tags::${TAGS}
+
+            echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+      - name: Build image
+        uses: docker/build-push-action@v2
+        with:
+         context: .
+         file: ./Dockerfile
+         push: false
+         tags: ${{ steps.prep.outputs.tags }}
+         build-args: |
+           ${{ steps.args.outputs.build_args }}
+         labels: |
+           org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+           org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+           org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Test image
+        env:
+            IMAGE_NAME: ${{ steps.prep.outputs.image_name }}
+        run: |
+            if [[ -f "docker-compose.test.yml" ]]; then
+                docker-compose --file docker-compose.test.yml build
+                docker-compose --file docker-compose.test.yml run sut
+            fi
+
+      - name: Login to DockerHub
+        if: github.ref == 'refs/heads/master'
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB }}
+
+      - name: Push image
+        if: github.ref == 'refs/heads/master'
+        run: |
+            docker push $DOCKER_REPO
+
+      - name: Report Status
+        if: always() && github.ref == 'refs/heads/master'
+        uses: ravsamhq/notify-slack-action@master
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GDD_GENERAL_WEBHOOK }}
