@@ -14,10 +14,7 @@ LABEL org.label-schema.name="Apache Airflow ${AIRFLOW_VERSION}" \
 
 RUN set -x\
     && apt-get update \
-    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev curl procps --no-install-recommends \
-    && if [ "$AIRFLOW_VERSION" = "1.8.2" ]; then\
-           conda install -y pip==9;\
-       fi\
+    && apt-get install -y gcc g++ netcat git ca-certificates libpq-dev curl procps libsasl2-dev --no-install-recommends \
     && if [ "$AIRFLOW_VERSION" = "master" ]; then\
            pip install --no-cache-dir git+https://github.com/apache/airflow/#egg=apache-airflow[$AIRFLOW_EXTRAS];\
            curl -sL https://deb.nodesource.com/setup_8.x | bash - ;\
@@ -27,8 +24,6 @@ RUN set -x\
            npm run prod;\
            cd /;\
            apt-get remove -y --purge nodejs ;\
-       elif [ "$AIRFLOW_VERSION" = "1.9.0" ]; then\
-           pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION "werkzeug<1.0.0";\
        elif [ -n "$AIRFLOW_VERSION" ]; then\
            pip install --no-cache-dir apache-airflow[$AIRFLOW_EXTRAS]==$AIRFLOW_VERSION;\
        else\
